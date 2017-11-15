@@ -7,11 +7,7 @@ occQuestSet <- questionSet[questionSet$Category == "Occurrence",]
 
 shinyServer(function(input, output, session) {
   observe({
-      answerSeto1 <- lapply(1:questionCounts[1], 
-                          function(i) {
-                            mods <- (paste0('Occurr1',i))
-                            a1 <- callModule(questList,mods,occQuestSet[i,])
-                           })
+    occAnswer1 <- callModule(questList,"occList1",occQuestSet,"Occur1")
   })    
   
   output$answerseT <- renderText(answerSeto1())
