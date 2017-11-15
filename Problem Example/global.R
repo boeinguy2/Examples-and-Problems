@@ -1,46 +1,49 @@
-##########################################################
-###     Modules for Generating Dynamic Question Lists                 #####
-##########################################################
-
 questListInput <- function(id){
   ns <- NS(id)
-  
-  tagList(
-    tags$hr(style="border-color: darkblue;"),
-    h4(textOutput(ns("labelQ"))),
-    radioButtons(ns("c1"), "Please Select:", choices = c(""))
-  )
-  
+
+  uiOutput(ns("c1"))
+
 }
 
-questList <- function(input, output, session, q) {
+questList <- function(input, output, session, q, l) {
   
   ###This function requires the type of question to be specified
   
-  ns <- session$ns
-  
-  createLabel <- function(name) {
-    paste0(name,": ",q$Element.Question,sep = "")
-  }
-  
-  #output$QID <- as.character(q[2])
-  output$labelQ <- renderText({ createLabel(q$QID) })
-  
-  createOptions <- function() {
-    as.matrix(q[5:length(q)])
-  }
-  
+  output$c1 <- renderUI({
+    lapply(1:nrow(q),
+           function(i) {
+             
+             createLabel <- function(name,j) {
+               paste0(name,": ",q$Element.Question[j],sep = "")
+             }
+             
+             labelQ <- createLabel(q[i,]$QID,i)
+             
+             
+             createOptions <- function() {
+               as.matrix(q[i,5:length(q)])
+             }
+             tagList(
+               tags$hr(style="border-color: darkblue;"),
+               h4((paste0(labelQ))),
+               radioButtons(session$ns(paste0(l,i)), "Please Select:", choices = c(createOptions()))
+             )
+           }
+    )
+  })
+
   observe({
-    updateRadioButtons(session, "c1", choices = createOptions())
+    lapply(1:nrow(q), 
+           function(i) {
+             output[[paste0(l,i)]] <- reactive(paste0(l,i))   
+           }
+    )
   })
   print("Inside the Module")
   print(input$c1)
-  return(
-    list(
-      answer = reactive({input$c1})
-      #quest = reactive({q$QID})
-    )
-  )
+  # return(
+  #  list(
+  #    answer1 = reactive({paste0(l,1)})
+  #  )
+  # )
 }
-
-
