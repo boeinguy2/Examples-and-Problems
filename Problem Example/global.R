@@ -32,15 +32,20 @@ questList <- function(input, output, session, q, l) {
     )
   })
 
+  answer <- NULL
+  
   observe({
     lapply(1:nrow(q), 
            function(i) {
-             output[[paste0(l,i)]] <- reactive(paste0(l,i))   
+             answer[[paste0(l,i)]] <- input[[paste0(l,i)]] 
+             #input[[paste0(l,i)]] 
+             print(answer)
            }
     )
   })
+
   print("Inside the Module")
-  print(input$c1)
+  #print(input$c1)
   # return(
   #  list(
   #    answer1 = reactive({paste0(l,1)})
